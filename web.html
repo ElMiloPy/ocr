@@ -113,12 +113,12 @@
           body: JSON.stringify({images: imgs})
         }), json = await res.json();
         if(!res.ok) throw new Error(json.detail || "Error del servidor");
-        if(!json.text_data) throw new Error("Sin datos");
+        if(!json.data) throw new Error("Sin datos");
         upd(100);
         displayForm(json);
       } catch(e) {
         alert(e.message);
-        displayForm({ type:"No detectado", text_data: Object.fromEntries(fNames.map(n => [n, ""])) });
+        displayForm({ type:"No detectado", data: Object.fromEntries(fNames.map(n => [n, ""])) });
       } finally {
         fileCamera.disabled = fileGallery.disabled = sendBtn.disabled = false;
         progCont.style.display = "none"; uploaded = true;
@@ -134,7 +134,7 @@
       formCont.appendChild(warn);
       let form = document.createElement("form");
       form.appendChild(Object.assign(document.createElement("p"), { textContent:"Tipo: " + (data.type || "N/A") }));
-      let tData = data.text_data || {},
+      let tData = data.data || {},
           fields = Object.keys(tData).length ? Object.keys(tData) : fNames;
       fields.forEach(f => {
         form.appendChild(Object.assign(document.createElement("label"), { textContent: f }));
@@ -151,7 +151,7 @@
         try {
           let res = await fetch("https://radically-inspired-dodo.ngrok-free.app/checked", {
             method:"POST", headers:{"Content-Type":"application/json"},
-            body: JSON.stringify({ type: data.type, text_data: collected })
+            body: JSON.stringify({ type: data.type, data: collected })
           });
           if(res.ok) alert("¡¡Gracias por probar la demo!!");
           else { let err = await res.json(); throw new Error(err.detail || "Error del servidor"); }
